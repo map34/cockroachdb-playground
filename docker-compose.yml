@@ -1,0 +1,34 @@
+version: "3.8"
+services:
+    roach1:
+        image: cockroachdb/cockroach:v20.1.5
+        networks:
+            - roachnet
+        hostname: roach1
+        ports:
+            - 26257:26257
+            - 8080:8080
+        volumes:
+            - "./cockroach-data/roach1:/cockroach/cockroach-data"
+        command: start --insecure --join=roach1,roach2,roach3
+    roach2:
+        image: cockroachdb/cockroach:v20.1.5
+        networks:
+            - roachnet
+        hostname: roach2
+        volumes:
+            - "./cockroach-data/roach2:/cockroach/cockroach-data"
+        command: start --insecure --join=roach1,roach2,roach3
+    roach3:
+        image: cockroachdb/cockroach:v20.1.5
+        networks:
+            - roachnet
+        hostname: roach3
+        volumes:
+            - "./cockroach-data/roach3:/cockroach/cockroach-data"
+        command: start --insecure --join=roach1,roach2,roach3
+
+
+networks:
+    roachnet:
+        driver: bridge
